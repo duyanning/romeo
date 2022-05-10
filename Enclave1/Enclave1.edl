@@ -1,0 +1,13 @@
+enclave {
+    from "sgx_tstdc.edl" import *;
+
+    trusted {
+        /* define ECALLs here. */
+        public void core_service();
+    };
+
+    untrusted {
+        /* define OCALLs here. */
+        void send_confession_msg();
+    };
+};
