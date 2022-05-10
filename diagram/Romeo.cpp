@@ -47,7 +47,8 @@ void Romeo::confess()
 {
     QJsonObject confessionMsg;
     confessionMsg["instance_id"] = "duyanning@gmail.com";
-    confessionMsg["nonce"] = 12345;
+    //confessionMsg["nonce"] = 12345;
+    confessionMsg["nonce"] = "12345";
 
     QJsonDocument doc{ confessionMsg };
     udpSocket.writeDatagram(doc.toJson(), QHostAddress::LocalHost, 1314);
