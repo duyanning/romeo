@@ -6,16 +6,18 @@
 #include <QUdpSocket>
 #include <QThread>
 
+class Romeo;
 
 class ListeningThread : public QThread {
 public:
-    ListeningThread(QUdpSocket& s);
+    ListeningThread(QUdpSocket& s, Romeo* romeo);
     void stop();
 protected:
     void run();
 private:
     volatile bool stopped;
     QUdpSocket& udpSocket;
+    Romeo* romeo;
 };
 
 
@@ -25,6 +27,7 @@ public:
     void confess();
     void start_listening();
     void stop_listening();
+    void onMsg(QByteArray& jsonByteArray);
 
 private:
     QUdpSocket udpSocket;
