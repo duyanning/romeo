@@ -7,6 +7,8 @@
 
 #include "Romeo.h"
 
+#include "Enclave_u.h"
+
 DiagramWindow::DiagramWindow()
 {
     scene = new QGraphicsScene(0, 0, 600, 500);
@@ -258,8 +260,18 @@ void DiagramWindow::setZValue(int z)
 
 void DiagramWindow::setupNode(Node *node)
 {
-    node->setPos(QPoint(80 + (100 * (seqNumber % 5)), // todo: 可以将这个数学表达式的求值放到飞地中执行
-                        80 + (50 * ((seqNumber / 5) % 7))));
+    //node->setPos(QPoint(80 + (100 * (seqNumber % 5)), // todo: 可以将这个数学表达式的求值放到飞地中执行
+    //                    80 + (50 * ((seqNumber / 5) % 7))));
+    // 对以上代码进行改写如下:
+    //int xpos_ok = 80 + (100 * (seqNumber % 5)); // 再将个表达式放到飞地中去求值
+    int xpos = 0;
+    sgx_status_t ret = calculate_xpos(global_eid, seqNumber, &xpos);
+    //assert(xpos == xpos_ok);
+    int ypos = 80 + (50 * ((seqNumber / 5) % 7));
+
+    node->setPos(QPoint(xpos, ypos));
+
+
     scene->addItem(node);
     ++seqNumber;
 
@@ -300,7 +312,7 @@ DiagramWindow::NodePair DiagramWindow::selectedNodePair() const
     return NodePair();
 }
 
-// 本函数会被窗口被关闭,或者从File菜单中选择了Exit后被调用
+// 当主窗口被关闭,或者从File菜单中选择了Exit时,本函数会被调用
 // 我们在这里结束监听线程
 void DiagramWindow::closeEvent(QCloseEvent* event)
 {

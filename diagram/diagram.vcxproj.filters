@@ -65,6 +65,9 @@
     <ClCompile Include="Romeo.cpp">
       <Filter>Header Files</Filter>
     </ClCompile>
+    <ClCompile Include="Enclave_u.c">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="diagramwindow.h">
@@ -93,6 +96,9 @@
     <ClCompile Include="stable.h.cpp">
       <Filter>Generated Files</Filter>
     </ClCompile>
+    <CustomBuild Include="..\Enclave\Enclave.edl">
+      <Filter>Source Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="propertiesdialog.ui">
@@ -134,6 +140,9 @@
   <ItemGroup>
     <ClInclude Include="Romeo.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Enclave_u.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

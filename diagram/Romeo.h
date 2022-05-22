@@ -6,6 +6,9 @@
 #include <QUdpSocket>
 #include <QThread>
 
+#include "sgx_urts.h"
+#include "Enclave_u.h"
+
 class Romeo;
 
 class ListeningThread : public QThread {
@@ -35,3 +38,4 @@ private:
 };
 
 extern Romeo romeo;
+extern sgx_enclave_id_t global_eid;

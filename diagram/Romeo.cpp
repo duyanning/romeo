@@ -7,8 +7,11 @@
 #include <QtDebug>
 
 #include "Romeo.h"
+#include "sgx_urts.h"
+#include "Enclave_u.h"
 
 Romeo romeo;
+sgx_enclave_id_t global_eid = 0;
 
 ListeningThread::ListeningThread(QUdpSocket& s, Romeo* r)
     : udpSocket(s), romeo(r)
@@ -21,6 +24,7 @@ void ListeningThread::run()
 {
     QByteArray datagram;
     while (!stopped) {
+        // 下面这个函数会阻塞调用它的线程,所以我们设置一个超时时间.不然一直阻塞着,我们就没法检测变量stopped进而结束循环
         bool r = udpSocket.waitForReadyRead(1000);
         if (r) {
             datagram.resize(udpSocket.pendingDatagramSize());
@@ -74,5 +78,6 @@ void Romeo::onMsg(QByteArray& jsonByteArray)
     QJsonDocument jsonDoc = QJsonDocument::fromJson(jsonByteArray);
     QJsonObject jsonObj = jsonDoc.object();
 
+    // 没有noquote的话,输出的字符串都会被加上引号
     qDebug().noquote() << jsonObj["msg_type"].toString() << endl;
 }

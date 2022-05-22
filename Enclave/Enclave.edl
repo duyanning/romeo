@@ -3,11 +3,12 @@ enclave {
 
     trusted {
         /* define ECALLs here. */
-        public void core_service();
+        // int xpos = 80 + (100 * (seqNumber % 5))
+        public void calculate_xpos(int32_t seqNumber, [out] int32_t* xpos);
     };
 
     untrusted {
         /* define OCALLs here. */
-        void send_confession_msg();
+
     };
 };

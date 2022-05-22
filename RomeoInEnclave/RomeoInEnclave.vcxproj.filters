@@ -18,31 +18,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="$(projectname)_t.c">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="$(projectname).cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClInclude Include="$(projectname)_t.h">
       <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Xml Include="$(projectname).config.xml">
-      <Filter>Resource Files</Filter>
-    </Xml>
-  </ItemGroup>
-  <ItemGroup>
     <CustomBuild Include="$(projectname).edl">
       <Filter>Source Files</Filter>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Enclave1_private.pem">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
 </Project>
