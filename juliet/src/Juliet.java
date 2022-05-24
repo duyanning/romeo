@@ -1,46 +1,41 @@
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.SocketException;
-import java.util.Date;
-import org.json.simple.JSONArray;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 class Msg {
-    public String msg_type;
+    public String mMsgType;
     public Msg(String type) {
-        msg_type = type;
+        mMsgType = type;
     }
 }
 
 class ConfessionMsg extends Msg {
-    public String instance_id;
-    public String nonce;
-    ConfessionMsg(String instance_id, String nonce) {
+    public String mUserId;
+    public String mNonce;
+    ConfessionMsg(String userId, String nonce) {
         super("confession");
-        instance_id = instance_id;
-        nonce = nonce;
+        mUserId = userId;
+        mNonce = nonce;
     }
 
     ConfessionMsg(String jsonString) {
         super("confession");
         JSONParser parser = new JSONParser();
-        String msg_type = "";
-        String instance_id = "";
-        String nonce = "";
         try {
             JSONObject jsonMsg = (JSONObject)parser.parse(jsonString);
-            msg_type = (String)jsonMsg.get("msg_type");
-            System.out.println(msg_type);
+            mMsgType = (String)jsonMsg.get("msg_type");
+            System.out.println(mMsgType);
 
-            instance_id = (String) jsonMsg.get("instance_id");
-            System.out.println(instance_id);
+            mUserId = (String) jsonMsg.get("user_id");
+            System.out.println(mUserId);
 
             //System.out.println((long)json.get("nonce"));
-            nonce = (String) jsonMsg.get("nonce");
-            System.out.println(nonce);
+            mNonce = (String) jsonMsg.get("nonce");
+            System.out.println(mNonce);
 
         }
         catch (ParseException e) {
@@ -50,19 +45,19 @@ class ConfessionMsg extends Msg {
 }
 
 class ReassuranceMsg extends Msg {
-    public String instance_id;
-    public String nonce;
-    ReassuranceMsg(String instance_id, String nonce) {
+    public String mUserId;
+    public String mNonce;
+    ReassuranceMsg(String userId, String nonce) {
         super("reassurance");
-        instance_id = instance_id;
-        nonce = nonce;
+        this.mUserId = userId;
+        this.mNonce = nonce;
     }
 
     public String toJsonString() {
         JSONObject jsonReassuranceMsg = new JSONObject();
         jsonReassuranceMsg.put("msg_type", "reassurance");
-        jsonReassuranceMsg.put("instance_id", instance_id);
-        jsonReassuranceMsg.put("nonce", nonce);
+        jsonReassuranceMsg.put("user_id", mUserId);
+        jsonReassuranceMsg.put("nonce", mNonce);
         return jsonReassuranceMsg.toJSONString();
     }
 }
@@ -91,7 +86,7 @@ public class Juliet {
             ConfessionMsg confessionMsg = new ConfessionMsg(msgString);
 
             // 针对表白消息构造安抚消息
-            ReassuranceMsg reassuranceMsg = new ReassuranceMsg(confessionMsg.instance_id, confessionMsg.nonce);
+            ReassuranceMsg reassuranceMsg = new ReassuranceMsg(confessionMsg.mUserId, confessionMsg.mNonce);
 
             System.out.println(reassuranceMsg.toJsonString());
 

@@ -11,30 +11,35 @@
 
 class Romeo;
 
-class ListeningThread : public QThread {
-public:
-    ListeningThread(QUdpSocket& s, Romeo* romeo);
-    void stop();
-protected:
-    void run();
-private:
-    volatile bool stopped;
-    QUdpSocket& udpSocket;
-    Romeo* romeo;
-};
+//class ListeningThread : public QThread {
+//public:
+//    ListeningThread(QUdpSocket& s, Romeo* romeo);
+//    void stop();
+//protected:
+//    void run();
+//private:
+//    volatile bool stopped;
+//    QUdpSocket& udpSocket;
+//    Romeo* romeo;
+//};
 
 
-class Romeo {
+class Romeo : public QObject {
+    Q_OBJECT
 public:
     Romeo();
-    void confess();
+    void start();
+    void confess(const char* user_id, const char* nonce);
     void start_listening();
     void stop_listening();
     void onMsg(QByteArray& jsonByteArray);
 
 private:
     QUdpSocket udpSocket;
-    ListeningThread listening_thread;
+    //ListeningThread listening_thread;
+
+private slots:
+    void processPendingDatagrams();
 };
 
 extern Romeo romeo;

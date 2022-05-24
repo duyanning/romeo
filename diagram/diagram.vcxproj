@@ -787,7 +787,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Enclave_u.h" />
-    <ClInclude Include="Romeo.h" />
+    <QtMoc Include="Romeo.h" />
     <QtMoc Include="diagramwindow.h">
     </QtMoc>
     <ClInclude Include="link.h" />

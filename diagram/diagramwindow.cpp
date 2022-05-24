@@ -38,8 +38,6 @@ DiagramWindow::DiagramWindow()
 
 void DiagramWindow::addNode()
 {
-    romeo.confess();
-
     Node *node = new Node;
     node->setText(tr("Node %1").arg(seqNumber + 1));
     setupNode(node);
@@ -48,7 +46,7 @@ void DiagramWindow::addNode()
 void DiagramWindow::addLink()
 {
     NodePair nodes = selectedNodePair();
-    if (nodes == NodePair()) // todo: 可将这个==放在飞地中去执行. 在飞地中比较这两个指针值.
+    if (nodes == NodePair())
         return;
 
     Link *link = new Link(nodes.first, nodes.second);
@@ -264,8 +262,15 @@ void DiagramWindow::setupNode(Node *node)
     //                    80 + (50 * ((seqNumber / 5) % 7))));
     // 对以上代码进行改写如下:
     //int xpos_ok = 80 + (100 * (seqNumber % 5)); // 再将个表达式放到飞地中去求值
+    int ok = 1;
     int xpos = 0;
-    sgx_status_t ret = calculate_xpos(global_eid, seqNumber, &xpos);
+    sgx_status_t ret = calculate_xpos_in_enclave(global_eid, &ok, seqNumber, &xpos);
+    if (!ok) {
+        QMessageBox msgBox;
+        msgBox.setText("refuse to service.");
+        msgBox.exec();
+        return;
+    }
     //assert(xpos == xpos_ok);
     int ypos = 80 + (50 * ((seqNumber / 5) % 7));
 

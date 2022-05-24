@@ -62,11 +62,11 @@
     <ClCompile Include="propertiesdialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Romeo.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
     <ClCompile Include="Enclave_u.c">
       <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Romeo.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -85,6 +85,9 @@
     <CustomBuild Include="stable.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <QtMoc Include="Romeo.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
@@ -138,9 +141,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Romeo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Enclave_u.h">
       <Filter>Generated Files</Filter>
     </ClInclude>

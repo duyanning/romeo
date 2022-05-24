@@ -3,12 +3,12 @@ enclave {
 
     trusted {
         /* define ECALLs here. */
-        // int xpos = 80 + (100 * (seqNumber % 5))
-        public void calculate_xpos(int32_t seqNumber, [out] int32_t* xpos);
+        public void calculate_xpos_in_enclave([out] int* ok, int32_t seqNumber, [out] int32_t* xpos);
+        public void reassure_in_enclave([in, string] const char* user_id, [in, string] const char* nonce);
     };
 
     untrusted {
         /* define OCALLs here. */
-
+        void confess_through_untrusted([in, string] const char* user_id, [in, string] const char* nonce);
     };
 };

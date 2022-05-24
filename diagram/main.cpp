@@ -25,8 +25,11 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
+    qDebug().noquote() << "main thread: " << QThread::currentThread();
+    QApplication app(argc, argv);
 
     romeo.start_listening();
+    romeo.start();
 
     sgx_launch_token_t token = { 0 };
     sgx_status_t ret = SGX_ERROR_UNEXPECTED;
@@ -45,7 +48,6 @@ int main(int argc, char *argv[])
     //    qDebug().noquote() << "sgx error: sgx_destroy_enclave" << endl;
     //}
 
-    QApplication app(argc, argv);
     DiagramWindow view;
     view.show();
     return app.exec();
