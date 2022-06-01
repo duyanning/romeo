@@ -6,6 +6,9 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import java.nio.charset.StandardCharsets;
+import java.security.*;
+
 class Msg {
     public String mMsgType;
     public Msg(String type) {
@@ -47,10 +50,16 @@ class ConfessionMsg extends Msg {
 class ReassuranceMsg extends Msg {
     public String mUserId;
     public String mNonce;
-    ReassuranceMsg(String userId, String nonce) {
+    public String mNonceEncrypted;
+    ReassuranceMsg(String userId, String nonce) throws GeneralSecurityException {
         super("reassurance");
-        this.mUserId = userId;
-        this.mNonce = nonce;
+        mUserId = userId;
+        mNonce = nonce;
+
+        byte[] dataToEncrypt = mNonce.getBytes(StandardCharsets.UTF_8);
+        PublicKey publicKeyLoad = RsaEncryptionOaepSha256.getPublicKeyFromString(RsaEncryptionOaepSha256.loadRsaPublicKeyPem());
+        mNonceEncrypted = RsaEncryptionOaepSha256.base64Encoding(RsaEncryptionOaepSha256.rsaEncryptionOaepSha256(publicKeyLoad, dataToEncrypt));
+
     }
 
     public String toJsonString() {
@@ -58,12 +67,13 @@ class ReassuranceMsg extends Msg {
         jsonReassuranceMsg.put("msg_type", "reassurance");
         jsonReassuranceMsg.put("user_id", mUserId);
         jsonReassuranceMsg.put("nonce", mNonce);
+        jsonReassuranceMsg.put("nonce_encrypted", mNonceEncrypted);
         return jsonReassuranceMsg.toJSONString();
     }
 }
 
 public class Juliet {
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws Exception {
         System.out.println("Juliet started.");
         System.out.println("waiting for messages from Romeo ...");
 

@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     int updated = 0;
 
 
-    ret = sgx_create_enclave(_T("Enclave.signed.dll"), 1, &token, &updated, &global_eid, NULL);
+    ret = sgx_create_enclave(_T("F:\\romeo\\diagram\\x64\\Debug\\Enclave.signed.dll"), 1, &token, &updated, &global_eid, NULL);
     if (ret != SGX_SUCCESS) {
         qDebug().noquote() << "sgx error: sgx_create_enclave" << endl;
     }

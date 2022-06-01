@@ -1,4 +1,5 @@
 QT += widgets
+QT += network
 
 PRECOMPILED_HEADER = stable.h
 

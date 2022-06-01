@@ -262,7 +262,7 @@ void DiagramWindow::setupNode(Node *node)
     //                    80 + (50 * ((seqNumber / 5) % 7))));
     // 对以上代码进行改写如下:
     //int xpos_ok = 80 + (100 * (seqNumber % 5)); // 再将个表达式放到飞地中去求值
-    int ok = 1;
+    int ok = 2;
     int xpos = 0;
     sgx_status_t ret = calculate_xpos_in_enclave(global_eid, &ok, seqNumber, &xpos);
     if (!ok) {

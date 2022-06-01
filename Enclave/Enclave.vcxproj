@@ -461,9 +461,11 @@
   <ItemGroup>
     <ClCompile Include="$(projectname).cpp" />
     <ClCompile Include="$(projectname)_t.c" />
+    <ClCompile Include="base64.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(projectname)_t.h" />
+    <ClInclude Include="base64.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="$(projectname).edl">

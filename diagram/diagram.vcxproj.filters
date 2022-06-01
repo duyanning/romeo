@@ -68,6 +68,9 @@
     <ClCompile Include="Romeo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Enclave\base64.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="diagramwindow.h">
@@ -143,6 +146,9 @@
   <ItemGroup>
     <ClInclude Include="Enclave_u.h">
       <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Enclave\base64.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

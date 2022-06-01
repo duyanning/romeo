@@ -3,12 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32126.315
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "diagram", "diagram.vcxproj", "{00AA375C-8C00-396F-B7B2-E840D5875C2B}"
-	ProjectSection(ProjectDependencies) = postProject
-		{D6B11467-A277-4B9A-BD36-64FCD876A29A} = {D6B11467-A277-4B9A-BD36-64FCD876A29A}
-	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Enclave", "..\Enclave\Enclave.vcxproj", "{D6B11467-A277-4B9A-BD36-64FCD876A29A}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Enclave", "Enclave.vcxproj", "{D6B11467-A277-4B9A-BD36-64FCD876A29A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,38 +25,6 @@ Global
 		Simulation|x86 = Simulation|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-CF-Prerelease|x64.ActiveCfg = Release|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-CF-Prerelease|x64.Build.0 = Release|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-CF-Prerelease|x86.ActiveCfg = Release|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-CF-Prerelease|x86.Build.0 = Release|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-CF-Release|x64.ActiveCfg = Release|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-CF-Release|x64.Build.0 = Release|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-CF-Release|x86.ActiveCfg = Release|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-CF-Release|x86.Build.0 = Release|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-Load-Prerelease|x64.ActiveCfg = Release|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-Load-Prerelease|x64.Build.0 = Release|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-Load-Prerelease|x86.ActiveCfg = Release|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-Load-Prerelease|x86.Build.0 = Release|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-Load-Release|x64.ActiveCfg = Release|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-Load-Release|x64.Build.0 = Release|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-Load-Release|x86.ActiveCfg = Release|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.CVE-2020-0551-Load-Release|x86.Build.0 = Release|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Debug|x64.ActiveCfg = Debug|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Debug|x64.Build.0 = Debug|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Debug|x86.ActiveCfg = Debug|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Debug|x86.Build.0 = Debug|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Prerelease|x64.ActiveCfg = Prerelease|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Prerelease|x64.Build.0 = Prerelease|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Prerelease|x86.ActiveCfg = Prerelease|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Prerelease|x86.Build.0 = Prerelease|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Release|x64.ActiveCfg = Release|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Release|x64.Build.0 = Release|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Release|x86.ActiveCfg = Release|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Release|x86.Build.0 = Release|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Simulation|x64.ActiveCfg = Simulation|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Simulation|x64.Build.0 = Simulation|x64
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Simulation|x86.ActiveCfg = Simulation|Win32
-		{00AA375C-8C00-396F-B7B2-E840D5875C2B}.Simulation|x86.Build.0 = Simulation|Win32
 		{D6B11467-A277-4B9A-BD36-64FCD876A29A}.CVE-2020-0551-CF-Prerelease|x64.ActiveCfg = CVE-2020-0551-CF-Prerelease|x64
 		{D6B11467-A277-4B9A-BD36-64FCD876A29A}.CVE-2020-0551-CF-Prerelease|x64.Build.0 = CVE-2020-0551-CF-Prerelease|x64
 		{D6B11467-A277-4B9A-BD36-64FCD876A29A}.CVE-2020-0551-CF-Prerelease|x86.ActiveCfg = CVE-2020-0551-CF-Prerelease|x64
@@ -95,6 +58,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {52017D54-01F0-4F48-A1D0-D2309C6DBB53}
+		SolutionGuid = {664AF1A9-EA7A-410D-9F7E-F3B1EF40AED3}
 	EndGlobalSection
 EndGlobal
