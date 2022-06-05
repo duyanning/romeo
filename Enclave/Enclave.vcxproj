@@ -262,12 +262,12 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <Optimization>Disabled</Optimization>
       <WarningLevel>Level3</WarningLevel>
-      <AdditionalIncludeDirectories>$(SGXSDKInstallPath)include;$(SGXSDKInstallPath)include\tlibc;$(SGXSDKInstallPath)include\libc++;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SGXSDKInstallPath)include;$(SGXSDKInstallPath)include\tlibc;$(SGXSDKInstallPath)include\libc++;f:\sgx-openssl\intel-sgx-ssl-win_2.15_1.1.1m_update\Windows\package\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/d2FH4- %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>sgx_trts.lib;sgx_tstdc.lib;sgx_tservice.lib;sgx_tcrypto.lib;sgx_tcxx.lib</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(SGXSDKInstallPath)bin\$(Platform)\$(Configuration)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sgx_trts.lib;sgx_tstdc.lib;sgx_tservice.lib;sgx_tcrypto.lib;sgx_tcxx.lib;libsgx_tsgxssl_crypto.lib;libsgx_tsgxssl.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SGXSDKInstallPath)bin\$(Platform)\$(Configuration);F:\sgx-openssl\intel-sgx-ssl-win_2.15_1.1.1m_update\Windows\package\lib\x64\Debug</AdditionalLibraryDirectories>
       <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
       <EntryPointSymbol />
       <NoEntryPoint>true</NoEntryPoint>
@@ -462,10 +462,12 @@
     <ClCompile Include="$(projectname).cpp" />
     <ClCompile Include="$(projectname)_t.c" />
     <ClCompile Include="base64.cpp" />
+    <ClCompile Include="RsaPkcs15.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="$(projectname)_t.h" />
     <ClInclude Include="base64.h" />
+    <ClInclude Include="RsaPkcs15.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="$(projectname).edl">

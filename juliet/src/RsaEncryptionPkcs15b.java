@@ -1,22 +1,22 @@
-//package RSA_Encryption_2048_OAEP_SHA256;
+//package RSA_Encryption_2048_PKCS1_5;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.crypto.spec.OAEPParameterSpec;
-import javax.crypto.spec.PSource;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.*;
-import java.security.spec.MGF1ParameterSpec;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
+import java.io.*;
 
-public class RsaEncryptionOaepSha256 {
-    public static void deleted_main(String[] args) throws GeneralSecurityException, IOException {
-        System.out.println("RSA 2048 encryption OAEP SHA-256 string");
+public class RsaEncryptionPkcs15b {
+    public static void deleted_main(String[] args) throws Exception {
+        System.out.println("RSA 2048 encryption PKCS 1.5 string");
 
         String dataToEncryptString = "The quick brown fox jumps over the lazy dog";
         byte[] dataToEncrypt = dataToEncryptString.getBytes(StandardCharsets.UTF_8);
@@ -24,41 +24,69 @@ public class RsaEncryptionOaepSha256 {
 
         // # # # usually we would load the private and public key from a file or keystore # # #
         // # # # here we use hardcoded keys for demonstration - don't do this in real programs # # #
+        //String filenamePrivateKeyPem = "privatekey2048.pem";
+        //String filenamePublicKeyPem = "publickey2048.pem";
 
         // encryption
         System.out.println("\n* * * encrypt the plaintext with the RSA public key * * *");
         PublicKey publicKeyLoad = getPublicKeyFromString(loadRsaPublicKeyPem());
-        String ciphertextBase64 = base64Encoding(rsaEncryptionOaepSha256(publicKeyLoad, dataToEncrypt));
+        PrivateKey privateKeyLoad = getPrivateKeyFromString(loadRsaPrivateKeyPem());
+
+        // use this in production
+        //PublicKey publicKeyLoad = getPublicKeyFromString(loadRsaKeyPemFile(filenamePublicKeyPem));
+        //String ciphertextBase64 = base64Encoding(rsaEncryptionPkcs1(publicKeyLoad, dataToEncrypt));
+        String ciphertextBase64 = base64Encoding(rsaEncryptionPkcs1b(privateKeyLoad, dataToEncrypt));
         System.out.println("ciphertextBase64: " + ciphertextBase64);
 
         // transport the encrypted data to recipient
+        FileWriter fw = new FileWriter("encrypted-base64encoded.txt");
+        fw.write(ciphertextBase64);
+		fw.close();
 
+		/*
         // receiving the encrypted data, decryption
         System.out.println("\n* * * decrypt the ciphertext with the RSA private key * * *");
         String ciphertextReceivedBase64 = ciphertextBase64;
         System.out.println("ciphertextReceivedBase64: " + ciphertextReceivedBase64);
-        PrivateKey privateKeyLoad = getPrivateKeyFromString(loadRsaPrivateKeyPem());
+        // use this in production
+        //PrivateKey privateKeyLoad = getPrivateKeyFromString(loadRsaKeyPemFile(filenamePrivateKeyPem));
         byte[] ciphertextReceived = base64Decoding(ciphertextReceivedBase64);
-        byte[] decryptedtextByte = rsaDecryptionOaepSha256(privateKeyLoad, ciphertextReceived);
+        //byte[] decryptedtextByte = rsaDecryptionPkcs1(privateKeyLoad, ciphertextReceived);
+        byte[] decryptedtextByte = rsaDecryptionPkcs1b(publicKeyLoad, ciphertextReceived);
         System.out.println("decryptedtext: " + new String(decryptedtextByte, StandardCharsets.UTF_8));
+        */
     }
 
-    public static byte[] rsaEncryptionOaepSha256 (PublicKey publicKey, byte[] plaintextByte) throws NoSuchAlgorithmException,
-            InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException, InvalidAlgorithmParameterException {
+    //public static byte[] rsaEncryptionPkcs1 (PublicKey publicKey, byte[] plaintextByte) throws NoSuchAlgorithmException,
+    //        InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException {
+    //    byte[] ciphertextByte = null;
+    //    Cipher encryptCipher = Cipher.getInstance("RSA/ECB/PKCS1PADDING");
+    //    encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey);
+    //    ciphertextByte = encryptCipher.doFinal(plaintextByte);
+    //    return ciphertextByte;
+    //}
+    public static byte[] rsaEncryptionPkcs1b (PrivateKey privateKey, byte[] plaintextByte) throws NoSuchAlgorithmException,
+            InvalidKeyException, IllegalBlockSizeException, BadPaddingException, NoSuchPaddingException {
         byte[] ciphertextByte = null;
-        Cipher encryptCipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
-        OAEPParameterSpec oaepParameterSpecJCE = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT);
-        encryptCipher.init(Cipher.ENCRYPT_MODE, publicKey, oaepParameterSpecJCE);
+        Cipher encryptCipher = Cipher.getInstance("RSA/ECB/PKCS1PADDING");
+        encryptCipher.init(Cipher.ENCRYPT_MODE, privateKey);
         ciphertextByte = encryptCipher.doFinal(plaintextByte);
         return ciphertextByte;
     }
 
-    public static byte[] rsaDecryptionOaepSha256 (PrivateKey privateKey, byte[] ciphertextByte) throws NoSuchAlgorithmException,
-            NoSuchPaddingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+    //public static byte[] rsaDecryptionPkcs1 (PrivateKey privateKey, byte[] ciphertextByte) throws NoSuchAlgorithmException,
+    //        NoSuchPaddingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
+    //    byte[] decryptedtextByte = null;
+    //    Cipher decryptCipher = Cipher.getInstance("RSA/ECB/PKCS1PADDING");
+    //    decryptCipher.init(Cipher.DECRYPT_MODE, privateKey);
+    //    decryptedtextByte = decryptCipher.doFinal(ciphertextByte);
+    //    return decryptedtextByte;
+    //}
+    public static byte[] rsaDecryptionPkcs1b (PublicKey publicKey, byte[] ciphertextByte) throws NoSuchAlgorithmException,
+            NoSuchPaddingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         byte[] decryptedtextByte = null;
-        Cipher decryptCipher = Cipher.getInstance("RSA/ECB/OAEPWithSHA-256AndMGF1Padding");
-        OAEPParameterSpec oaepParameterSpecJCE = new OAEPParameterSpec("SHA-256", "MGF1", MGF1ParameterSpec.SHA256, PSource.PSpecified.DEFAULT);
-        decryptCipher.init(Cipher.DECRYPT_MODE, privateKey, oaepParameterSpecJCE);
+        Cipher decryptCipher = Cipher.getInstance("RSA/ECB/PKCS1PADDING");
+        decryptCipher.init(Cipher.DECRYPT_MODE, publicKey);
         decryptedtextByte = decryptCipher.doFinal(ciphertextByte);
         return decryptedtextByte;
     }
@@ -136,5 +164,9 @@ public class RsaEncryptionOaepSha256 {
         KeyFactory kf = KeyFactory.getInstance("RSA");
         PublicKey pubKey = (PublicKey) kf.generatePublic(new X509EncodedKeySpec(encoded));
         return pubKey;
+    }
+
+    static String loadRsaKeyPemFile(String filename) throws IOException {
+        return new String(Files.readAllBytes(Paths.get(filename)), StandardCharsets.UTF_8);
     }
 }

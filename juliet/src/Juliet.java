@@ -9,6 +9,8 @@ import org.json.simple.parser.ParseException;
 import java.nio.charset.StandardCharsets;
 import java.security.*;
 
+import java.util.Base64;
+
 class Msg {
     public String mMsgType;
     public Msg(String type) {
@@ -57,8 +59,8 @@ class ReassuranceMsg extends Msg {
         mNonce = nonce;
 
         byte[] dataToEncrypt = mNonce.getBytes(StandardCharsets.UTF_8);
-        PublicKey publicKeyLoad = RsaEncryptionOaepSha256.getPublicKeyFromString(RsaEncryptionOaepSha256.loadRsaPublicKeyPem());
-        mNonceEncrypted = RsaEncryptionOaepSha256.base64Encoding(RsaEncryptionOaepSha256.rsaEncryptionOaepSha256(publicKeyLoad, dataToEncrypt));
+        PrivateKey privateKeyLoad = RsaEncryptionPkcs15b.getPrivateKeyFromString(RsaEncryptionPkcs15b.loadRsaPrivateKeyPem());
+        mNonceEncrypted = RsaEncryptionPkcs15b.base64Encoding(RsaEncryptionPkcs15b.rsaEncryptionPkcs1b(privateKeyLoad, dataToEncrypt));
 
     }
 

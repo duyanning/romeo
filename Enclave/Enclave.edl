@@ -6,10 +6,16 @@ enclave {
         //public void calculate_xpos_in_enclave([out] int* ok, int32_t seqNumber, [out] int32_t* xpos);
         public void calculate_xpos_in_enclave([out] int* ok, int seqNumber, [out] int* xpos);
 
+        /*
         public void reassure_in_enclave([in, string] const char* user_id,
             [in, string] const unsigned char* nonce_encrypted,
             size_t len,
             [in, string] const char* nonce);
+        */
+
+        public void reassure_in_enclave([in, string] const char* user_id,
+            [in, string] const char* nonce_encrypted);
+
     };
 
     untrusted {

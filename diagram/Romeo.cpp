@@ -136,13 +136,17 @@ void Romeo::onMsg(QByteArray& jsonByteArray)
 
     // ECALL
     qDebug().noquote() << "ECALL: reassure_in_enclave";
+    //sgx_status_t ret = reassure_in_enclave(global_eid,
+    //    jsonObj["user_id"].toString().toLocal8Bit().data(),
+    //    (unsigned char*)nonce_encrypted.data(),
+    //    nonce_encrypted.size(),
+    //    jsonObj["nonce"].toString().toLocal8Bit().data()
+    //    //nonce_encrypted.
+    //);
     sgx_status_t ret = reassure_in_enclave(global_eid,
         jsonObj["user_id"].toString().toLocal8Bit().data(),
-        (unsigned char*)nonce_encrypted.data(),
-        nonce_encrypted.size(),
-        jsonObj["nonce"].toString().toLocal8Bit().data()
-        //nonce_encrypted.
-        );
+        jsonObj["nonce_encrypted"].toString().toLocal8Bit().data()
+    );
 }
 
 // OCALL
