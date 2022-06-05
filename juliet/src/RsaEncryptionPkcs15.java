@@ -14,7 +14,7 @@ import java.security.spec.X509EncodedKeySpec;
 import java.util.Base64;
 import java.io.*;
 
-public class RsaEncryptionPkcs15b {
+public class RsaEncryptionPkcs15 {
     public static void deleted_main(String[] args) throws Exception {
         System.out.println("RSA 2048 encryption PKCS 1.5 string");
 

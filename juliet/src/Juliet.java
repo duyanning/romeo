@@ -1,4 +1,5 @@
-import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
@@ -8,8 +9,8 @@ import org.json.simple.parser.ParseException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.*;
-
-import java.util.Base64;
+import java.util.HashMap;
+import java.util.LinkedList;
 
 class Msg {
     public String mMsgType;
@@ -59,8 +60,8 @@ class ReassuranceMsg extends Msg {
         mNonce = nonce;
 
         byte[] dataToEncrypt = mNonce.getBytes(StandardCharsets.UTF_8);
-        PrivateKey privateKeyLoad = RsaEncryptionPkcs15b.getPrivateKeyFromString(RsaEncryptionPkcs15b.loadRsaPrivateKeyPem());
-        mNonceEncrypted = RsaEncryptionPkcs15b.base64Encoding(RsaEncryptionPkcs15b.rsaEncryptionPkcs1b(privateKeyLoad, dataToEncrypt));
+        PrivateKey privateKeyLoad = RsaEncryptionPkcs15.getPrivateKeyFromString(RsaEncryptionPkcs15.loadRsaPrivateKeyPem());
+        mNonceEncrypted = RsaEncryptionPkcs15.base64Encoding(RsaEncryptionPkcs15.rsaEncryptionPkcs1b(privateKeyLoad, dataToEncrypt));
 
     }
 
@@ -74,22 +75,90 @@ class ReassuranceMsg extends Msg {
     }
 }
 
+class InstanceInfo {
+};
+
+class InstanceList {
+    HashMap<String, InstanceInfo> mMap = new HashMap<String, InstanceInfo>();
+    LinkedList<String> mList = new LinkedList<String>(); // 为了记住谁是最老的实例
+    boolean has(String instanceId) {
+        return mMap.get(instanceId) != null;
+    }
+
+    InstanceInfo getInstance(String instanceId) {
+        return mMap.get(instanceId);
+    }
+
+    int size() {
+        return mMap.size();
+    }
+
+    void add(String instanceId) {
+        mMap.put(instanceId, new InstanceInfo());
+        mList.offer(instanceId);
+    }
+
+    void removeEldest() {
+        String eldestInstanceId = mList.getFirst();
+        mList.removeFirst();
+        mMap.remove(eldestInstanceId);
+    }
+
+}
+
+class UserInfo {
+    int mMaxOnlineNum;
+    InstanceList mInstanceList = new InstanceList();
+}
+
+class UserList {
+    HashMap<String, UserInfo> mMap = new HashMap<String, UserInfo>();
+
+    void loadFromFile() throws Exception {
+        BufferedReader br = new BufferedReader(new FileReader("user-list.txt"));
+        String userId = br.readLine();
+        while (userId != null) {
+            mMap.put(userId, new UserInfo());
+            userId = br.readLine();
+        }
+        br.close();
+    }
+
+    boolean has(String userId) {
+        return mMap.get(userId) != null;
+    }
+
+    UserInfo getUserInfo(String userId) {
+        return mMap.get(userId);
+    }
+}
+
 public class Juliet {
-    public static void main(String[] args) throws Exception {
+
+//    ArrayList<String> mUserList;
+//    ArrayList<String> mInstanceLis
+    UserList mUserList = new UserList();
+    DatagramSocket datagramSocket;
+    DatagramPacket inPkt;
+
+    void go() throws Exception {
         System.out.println("Juliet started.");
+        System.out.println("loading user list from file user-list.txt");
+        mUserList.loadFromFile();
+
         System.out.println("waiting for messages from Romeo ...");
 
         // 创建套接字（作为服务器，端口号必须是确定的，不然别人如何知道你在哪个端口）
-        DatagramSocket s = new DatagramSocket(1314);
+        datagramSocket = new DatagramSocket(1314);
 
         while (true) {
 
             byte[] inBuf = new byte[1000]; // 输入缓冲区
 
             // 构造用于接收的数据包
-            DatagramPacket inPkt = new DatagramPacket(inBuf, inBuf.length);
+            inPkt = new DatagramPacket(inBuf, inBuf.length);
 
-            s.receive(inPkt); // 接收
+            datagramSocket.receive(inPkt); // 接收
 
             // 从收到的udp数据报中得到一个字符串
             String msgString = new String(inPkt.getData(), 0, inPkt.getLength());
@@ -97,20 +166,61 @@ public class Juliet {
             // 该字符串其实是个json对象的文本形式
             ConfessionMsg confessionMsg = new ConfessionMsg(msgString);
 
-            // 针对表白消息构造安抚消息
-            ReassuranceMsg reassuranceMsg = new ReassuranceMsg(confessionMsg.mUserId, confessionMsg.mNonce);
+            // 如果用户id就不在用户列表中,直接忽略该消息
+            if (!mUserList.has(confessionMsg.mUserId))
+                continue;
 
-            System.out.println(reassuranceMsg.toJsonString());
+            // 是udp数据报中提取ip地址与port号,形成实例id
+            String ip = inPkt.getAddress().getHostAddress();
+            String port = String.valueOf(inPkt.getPort());
+            String instanceId = ip + ":" + port;
 
-            // ------------以上为从客户端接收数据，以下为向客户端发送数据-----------------
+            UserInfo userInfo = mUserList.getUserInfo(confessionMsg.mUserId);
 
-            byte[] outBuf = reassuranceMsg.toJsonString().getBytes();
-            DatagramPacket outPkt = new DatagramPacket( // 构造用于发送的数据包
-                    outBuf, outBuf.length, // 输出缓冲区起始地址与大小
-                    inPkt.getAddress(), inPkt.getPort() // 接收方的地址和端口号（谁给我发，我就发给谁）
-            );
+            // 判断是否在该用户的实例列表中
+            if (userInfo.mInstanceList.has(instanceId)) {
 
-            s.send(outPkt); // 发送
+                if (exceed_online_limit(userInfo))
+                    userInfo.mInstanceList.removeEldest();
+                send_reassurance_msg(confessionMsg);
+            }
+            else {
+
+            }
+
         }
+
+    }
+
+    boolean exceed_online_limit(UserInfo userInfo) {
+        // 获得该用户的实例列表
+        InstanceList instanceList = userInfo.mInstanceList;
+        int maxOnlineNum = userInfo.mMaxOnlineNum;
+
+        if (instanceList.size() > maxOnlineNum)
+            return true;
+
+        return false;
+    }
+
+    void send_reassurance_msg(ConfessionMsg confessionMsg) throws Exception {
+        // 针对表白消息构造安抚消息
+        ReassuranceMsg reassuranceMsg = new ReassuranceMsg(confessionMsg.mUserId, confessionMsg.mNonce);
+
+        System.out.println(reassuranceMsg.toJsonString());
+
+        byte[] outBuf = reassuranceMsg.toJsonString().getBytes();
+        DatagramPacket outPkt = new DatagramPacket( // 构造用于发送的数据包
+                outBuf, outBuf.length, // 输出缓冲区起始地址与大小
+                inPkt.getAddress(), inPkt.getPort() // 接收方的地址和端口号（谁给我发，我就发给谁）
+        );
+
+        datagramSocket.send(outPkt); // 发送
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        Juliet juliet = new Juliet();
+        juliet.go();
     }
 }
