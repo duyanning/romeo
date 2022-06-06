@@ -37,6 +37,7 @@ public:
 private:
     QUdpSocket udpSocket;
     //ListeningThread listening_thread;
+    QString m_secret;
 
 private slots:
     void processPendingDatagrams();

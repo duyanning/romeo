@@ -93,6 +93,10 @@ void Romeo::confess(const char* user_id, const char* nonce)
     confessionMsg["user_id"] = user_id;
     confessionMsg["nonce"] = nonce;
 
+    // 第一次向朱丽叶表白时,还没有暗号;后边的表白必须带着朱丽叶给咱分配的暗号.
+    if (!m_secret.isEmpty())
+        confessionMsg["secret"] = m_secret;
+
     QJsonDocument doc{ confessionMsg };
     udpSocket.writeDatagram(doc.toJson(), QHostAddress::LocalHost, 1314);
 
@@ -126,6 +130,11 @@ void Romeo::onMsg(QByteArray& jsonByteArray)
     // 没有noquote的话,输出的字符串都会被加上引号
     qDebug().noquote() << jsonObj["msg_type"].toString() << endl;
     qDebug().noquote() << jsonObj["nonce_encrypted"].toString() << endl;
+    qDebug().noquote() << jsonObj["secret"].toString() << endl;
+
+    // 第一次得到安抚消息时,安抚消息里含有朱丽叶给分配的暗号,记住这个暗号
+    if (m_secret.isEmpty())
+        m_secret = jsonObj["secret"].toString();
 
     QString nonce_encrypted_decoded = jsonObj["nonce_encrypted"].toString();
     QByteArray nonce_encrypted = base64_decode(nonce_encrypted_decoded);
@@ -136,13 +145,7 @@ void Romeo::onMsg(QByteArray& jsonByteArray)
 
     // ECALL
     qDebug().noquote() << "ECALL: reassure_in_enclave";
-    //sgx_status_t ret = reassure_in_enclave(global_eid,
-    //    jsonObj["user_id"].toString().toLocal8Bit().data(),
-    //    (unsigned char*)nonce_encrypted.data(),
-    //    nonce_encrypted.size(),
-    //    jsonObj["nonce"].toString().toLocal8Bit().data()
-    //    //nonce_encrypted.
-    //);
+
     sgx_status_t ret = reassure_in_enclave(global_eid,
         jsonObj["user_id"].toString().toLocal8Bit().data(),
         jsonObj["nonce_encrypted"].toString().toLocal8Bit().data()

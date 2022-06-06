@@ -1,137 +1,7 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
-import java.nio.charset.StandardCharsets;
-import java.security.*;
-import java.util.HashMap;
-import java.util.LinkedList;
-
-class Msg {
-    public String mMsgType;
-    public Msg(String type) {
-        mMsgType = type;
-    }
-}
-
-class ConfessionMsg extends Msg {
-    public String mUserId;
-    public String mNonce;
-    ConfessionMsg(String userId, String nonce) {
-        super("confession");
-        mUserId = userId;
-        mNonce = nonce;
-    }
-
-    ConfessionMsg(String jsonString) {
-        super("confession");
-        JSONParser parser = new JSONParser();
-        try {
-            JSONObject jsonMsg = (JSONObject)parser.parse(jsonString);
-            mMsgType = (String)jsonMsg.get("msg_type");
-            System.out.println(mMsgType);
-
-            mUserId = (String) jsonMsg.get("user_id");
-            System.out.println(mUserId);
-
-            //System.out.println((long)json.get("nonce"));
-            mNonce = (String) jsonMsg.get("nonce");
-            System.out.println(mNonce);
-
-        }
-        catch (ParseException e) {
-            System.out.println(e);
-        }
-    }
-}
-
-class ReassuranceMsg extends Msg {
-    public String mUserId;
-    public String mNonce;
-    public String mNonceEncrypted;
-    ReassuranceMsg(String userId, String nonce) throws GeneralSecurityException {
-        super("reassurance");
-        mUserId = userId;
-        mNonce = nonce;
-
-        byte[] dataToEncrypt = mNonce.getBytes(StandardCharsets.UTF_8);
-        PrivateKey privateKeyLoad = RsaEncryptionPkcs15.getPrivateKeyFromString(RsaEncryptionPkcs15.loadRsaPrivateKeyPem());
-        mNonceEncrypted = RsaEncryptionPkcs15.base64Encoding(RsaEncryptionPkcs15.rsaEncryptionPkcs1b(privateKeyLoad, dataToEncrypt));
-
-    }
-
-    public String toJsonString() {
-        JSONObject jsonReassuranceMsg = new JSONObject();
-        jsonReassuranceMsg.put("msg_type", "reassurance");
-        jsonReassuranceMsg.put("user_id", mUserId);
-        jsonReassuranceMsg.put("nonce", mNonce);
-        jsonReassuranceMsg.put("nonce_encrypted", mNonceEncrypted);
-        return jsonReassuranceMsg.toJSONString();
-    }
-}
-
-class InstanceInfo {
-};
-
-class InstanceList {
-    HashMap<String, InstanceInfo> mMap = new HashMap<String, InstanceInfo>();
-    LinkedList<String> mList = new LinkedList<String>(); // 为了记住谁是最老的实例
-    boolean has(String instanceId) {
-        return mMap.get(instanceId) != null;
-    }
-
-    InstanceInfo getInstance(String instanceId) {
-        return mMap.get(instanceId);
-    }
-
-    int size() {
-        return mMap.size();
-    }
-
-    void add(String instanceId) {
-        mMap.put(instanceId, new InstanceInfo());
-        mList.offer(instanceId);
-    }
-
-    void removeEldest() {
-        String eldestInstanceId = mList.getFirst();
-        mList.removeFirst();
-        mMap.remove(eldestInstanceId);
-    }
-
-}
-
-class UserInfo {
-    int mMaxOnlineNum;
-    InstanceList mInstanceList = new InstanceList();
-}
-
-class UserList {
-    HashMap<String, UserInfo> mMap = new HashMap<String, UserInfo>();
-
-    void loadFromFile() throws Exception {
-        BufferedReader br = new BufferedReader(new FileReader("user-list.txt"));
-        String userId = br.readLine();
-        while (userId != null) {
-            mMap.put(userId, new UserInfo());
-            userId = br.readLine();
-        }
-        br.close();
-    }
-
-    boolean has(String userId) {
-        return mMap.get(userId) != null;
-    }
-
-    UserInfo getUserInfo(String userId) {
-        return mMap.get(userId);
-    }
-}
+;
 
 public class Juliet {
 
@@ -180,11 +50,28 @@ public class Juliet {
             // 判断是否在该用户的实例列表中
             if (userInfo.mInstanceList.has(instanceId)) {
 
+                if (confessionMsg.mSecret == null) {
+                    ignore();
+                    continue;
+                }
+
+                InstanceInfo instanceInfo = userInfo.mInstanceList.getInstanceInfo(instanceId);
+                if (!confessionMsg.mSecret.equals(instanceInfo.mSecret)) {
+                    ignore();
+                    continue;
+                }
+
                 if (exceed_online_limit(userInfo))
                     userInfo.mInstanceList.removeEldest();
-                send_reassurance_msg(confessionMsg);
+                send_reassurance_msg(confessionMsg, null);
             }
             else {
+                if (confessionMsg.mSecret == null) {
+
+                    InstanceInfo instanceInfo = userInfo.mInstanceList.add(instanceId);
+                    send_reassurance_msg(confessionMsg, instanceInfo.mSecret);
+                    continue;
+                }
 
             }
 
@@ -203,9 +90,10 @@ public class Juliet {
         return false;
     }
 
-    void send_reassurance_msg(ConfessionMsg confessionMsg) throws Exception {
+    // 只有第一次发给罗密欧的安抚消息中含有secret,其他情况为secret==null
+    void send_reassurance_msg(ConfessionMsg confessionMsg, String secret) throws Exception {
         // 针对表白消息构造安抚消息
-        ReassuranceMsg reassuranceMsg = new ReassuranceMsg(confessionMsg.mUserId, confessionMsg.mNonce);
+        ReassuranceMsg reassuranceMsg = new ReassuranceMsg(confessionMsg, secret);
 
         System.out.println(reassuranceMsg.toJsonString());
 
@@ -217,6 +105,10 @@ public class Juliet {
 
         datagramSocket.send(outPkt); // 发送
 
+    }
+
+    void ignore() {
+        // do nothing
     }
 
     public static void main(String[] args) throws Exception {
