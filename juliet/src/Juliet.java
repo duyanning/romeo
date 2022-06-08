@@ -1,7 +1,11 @@
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
+import com.sun.net.httpserver.*;
 
-;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.*;
+
 
 public class Juliet {
 
@@ -11,12 +15,21 @@ public class Juliet {
     DatagramSocket datagramSocket;
     DatagramPacket inPkt;
 
+    //StateServer mStateServer = new StateServer();
+
     void go() throws Exception {
         System.out.println("Juliet started.");
         System.out.println("loading user list from file user-list.txt");
         mUserList.loadFromFile();
 
         System.out.println("waiting for messages from Romeo ...");
+
+        //mStateServer.start();
+        // 开启状态服务器,好让用户查询朱丽叶的状态
+        HttpServer server = HttpServer.create(new InetSocketAddress(1314), 0);
+        server.createContext("/", new StateQueryHandler(mUserList));
+        server.setExecutor(null); // creates a default executor
+        server.start();
 
         // 创建套接字（作为服务器，端口号必须是确定的，不然别人如何知道你在哪个端口）
         datagramSocket = new DatagramSocket(1314);
@@ -110,6 +123,7 @@ public class Juliet {
     void ignore() {
         // do nothing
     }
+
 
     public static void main(String[] args) throws Exception {
         Juliet juliet = new Juliet();

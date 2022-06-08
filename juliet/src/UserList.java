@@ -28,4 +28,15 @@ class UserList {
     UserInfo getUserInfo(String userId) {
         return mMap.get(userId);
     }
+
+    String getHtmlDesc() {
+        String desc = "";
+        for (HashMap.Entry<String, UserInfo> user :
+                mMap.entrySet()) {
+            desc += user.getKey();
+            desc += "<p/>";
+        }
+        return desc;
+    }
+
 }
