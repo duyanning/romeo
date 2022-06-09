@@ -1,9 +1,6 @@
 import com.sun.net.httpserver.*;
 
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.net.*;
 
 
@@ -74,6 +71,12 @@ public class Juliet {
                     continue;
                 }
 
+                // 能走到这,说明secret通过验证了
+                if (!instanceInfo.mIsSecretVerified) {
+                    instanceInfo.mIsSecretVerified = true;
+                    userInfo.mInstanceList.promoteToVerifiedInstance(instanceId);
+                }
+
                 if (exceed_online_limit(userInfo))
                     userInfo.mInstanceList.removeEldest();
                 send_reassurance_msg(confessionMsg, null);
@@ -97,7 +100,7 @@ public class Juliet {
         InstanceList instanceList = userInfo.mInstanceList;
         int maxOnlineNum = userInfo.mMaxOnlineNum;
 
-        if (instanceList.size() > maxOnlineNum)
+        if (instanceList.verifiedInstanceTotalNumber() > maxOnlineNum)
             return true;
 
         return false;

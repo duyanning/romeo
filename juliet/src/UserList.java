@@ -31,10 +31,14 @@ class UserList {
 
     String getHtmlDesc() {
         String desc = "";
-        for (HashMap.Entry<String, UserInfo> user :
-                mMap.entrySet()) {
+        for (HashMap.Entry<String, UserInfo> user : mMap.entrySet()) {
             desc += user.getKey();
-            desc += "<p/>";
+            UserInfo userInfo = user.getValue();
+            InstanceList instanceList = userInfo.mInstanceList;
+            desc += " " + instanceList.verifiedInstanceTotalNumber();
+            desc += " of " + userInfo.mMaxOnlineNum;
+            desc += "<br/>";
+            desc += instanceList.getHtmlDesc("&nbsp; &nbsp; &nbsp; &nbsp; ");
         }
         return desc;
     }
